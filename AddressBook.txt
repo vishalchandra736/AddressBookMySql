@@ -1,0 +1,157 @@
+#UC1
+create  database Address_Book_Service;
+use Address_Book_Service;
+
+#UC2
+create table address_book_table(
+first varchar(20),
+last varchar(20),
+city varchar(20),
+state varchar(20),
+zip int ,
+phone_number int,
+email varchar(30),
+primary key(first)
+);
+ 
+ #UC3
+ insert into address_book_table(first,last,city,state,zip,phone_number,email) values("Prathmesh","Vardam","Mumbai","Mahrashtra",400078,992019,"Ptaj@gmail.com"),("Romil","Ghadge","Pune","Mahrashtra",800078,992719,"Romilghaj@gmail.com"),("Sarvesh","Pednekar","Ratnagiri","Mahrashtra",400098,987019,"Sarveshped32@gmail.com"),("Vaibhav","Gopale","Khed","Mahrashtra",400078,992019,"Gopale34@gmail.com");
+ select * from address_book_table ;
+ insert into address_book_table(first,last,city,state,zip,phone_number,email) values("Vaibhav","Gopale","Khed","Mahrashtra",400078,992019,"Gopale34@gmail.com");
+  insert into address_book_table(first,last,city,state,zip,phone_number,email) values("Pravin","Zaple","Khed","Mahrashtra",400078,992019,"Gopale34@gmail.com");
+ 
+ #UC4
+ update address_book_table set city = "Pune"
+ where first = "Prathmesh";
+ 
+ #UC5
+delete from address_book_table
+ where first = "Vaibhav";
+ 
+ #UC6
+ select * from address_book_table
+ where state = 'Mahrashtra';
+  select * from address_book_table
+ where city = 'Pune';
+ 
+ #UC7
+ select count(state) from address_book_table
+where state = 'Mahrashtra';
+select count(city) from address_book_table
+where city ='Pune';
+
+#UC 8
+select * from address_book_table
+where city =  'Pune' order by first desc;
+
+#UC9
+alter table address_book_table add address_book_name varchar(20) after last ;
+alter table address_book_table add address_book_type varchar(20) after address_book_name ;
+update address_book_table set address_book_name = "Friends Forever"
+where first = 'romil';
+update address_book_table set address_book_name = "Friends Forever"
+where first = 'prathmesh';
+update address_book_table set address_book_name = "Friends Forever"
+where first = 'sarvesh';
+update address_book_table set address_book_name = "Family forever "
+where first in("pravin");
+update address_book_table set address_book_type = "Family "
+where first in("pravin");
+update address_book_table set address_book_type = "Friends "
+where first in("prathmesh","romil","sarvesh");
+select * from address_book_table;
+
+#UC10
+select count(address_book_type) from address_book_table
+where address_book_type = "Friends ";
+select count(address_book_type) from address_book_table
+where address_book_type = 'Family ';
+
+#UC11
+insert into address_book_table(first,last,city,state,zip,phone_number,email,address_book_type,address_book_name) values("Vaibhav","Gopale","Bhandup","Maharashtra",400334,748373,"Vaibhav123@gmail.com","Friends ","Friends Forever"),("Siddhesh","Shewale","Bhandup","Maharashtra",400334,748373,"sid324@gmail.com","Family ","Family Forever");
+select * from address_book_table;
+
+#UC12 Draw the ER Diagram for Address Book Service DB
+
+ CREATE TABLE  contacts
+ (firstName varchar(50) NOT NULL, lastName varchar(50) NOT NULL,
+mobileNumber varchar(20) NOT NULL,email varchar(50) NOT NULL, PRIMARY KEY(firstName));
+
+ describe contacts;
+
+ create table address (
+zip varchar(6) not null,
+state varchar(30) not null,
+primary key(zip));
+
+ describe address;
+
+ ALTER TABLE address
+ADD city varchar(50);
+
+ describe address;
+
+ create table contacts_address(
+firstname varchar(30) not null,
+zip varchar(6) not null,
+foreign key (firstname) references contacts(firstname),
+foreign key (zip) references address(zip));
+
+ desc contacts_address;
+
+ create table relations(
+ type varchar(15),
+primary key(type));
+
+ desc relations;
+
+ create table contacts_relation(
+firstname varchar(30) not null,
+type varchar(15),
+foreign key (firstname) references contacts(firstname),
+foreign key(type) references relations(type));
+
+ desc contacts_relation;
+
+insert into contacts values('Manoj','Sonawane','7852031478','abc@gmail.com'),
+('Nitin','Patil','6254782145','kohli@gmail.com'),
+('Ajay','Koli','6587425365','ajay@yahoo.com');
+
+select * from contacts;
+
+ insert into relations values('family'),('friend'),('work');
+
+ select * from relations;
+
+
+ insert into address values ('560039','Bangalore','Karnataka'),
+('560040','Mumbai','Maharashtra'),
+('560001','Chennai','Tamil Nadu');
+
+ select * from address;
+
+insert into contacts_relation values
+( 'Manoj', 'friend'),
+( 'Nitin', 'family'),
+( 'Manoj', 'friend');
+
+ select * from contacts_relation;
+
+insert into contacts_address values ('Manoj','560001');
+
+insert into contacts_address values ('Nitin','560039');
+
+insert into contacts_address values ('Manoj','560040');
+
+select * from contacts_address;
+ 
+
+#UC13 Ensure all retrieve queries done especially in UC 6, UC 7, UC 8 and UC 10 are working with new table structure
+
+ select count(contacts.firstname) from contacts,contacts_address,address
+where contacts.firstname = contacts_address.firstname and contacts_address.zip = address.zip and address.state = 'karnataka';
+
+ select count(contacts.firstname) from contacts,contacts_address,address
+where contacts.firstname = contacts_address.firstname and contacts_address.zip = address.zip and address.city = 'karnataka';
+
+select type, Count(firstName) from contacts_relation group by type;
